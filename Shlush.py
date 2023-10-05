@@ -1,19 +1,15 @@
 import os
 import openpyxl
+import csv
 import itertools
-import Helper
+from Color_Helper import Color_Helper
+
 
 
 class Shlush():
     def __init__(self) -> None:
-        self.helper = Helper.Helper()
-        
+        self.color_helper = Color_Helper()       
 
-
-    def run_shlush_brands_script(self,board_id):
-        self.shlush_brands_func(self.helper.get_board_name(board_id))
-        self.shlush_to_csv(self.helper.get_board_name(board_id))
-        self.helper.green_colored_printer(f"Shlush Script has finished board {self.helper.get_board_name(board_id)}")
 
     def shlush_to_csv(self,excel_name):
         # CSV
@@ -26,7 +22,7 @@ class Shlush():
         sheet = wb[sheet_name]
 
         # create a new CSV file
-        csv_file_name = f"{excel_name}_ToImport.csv"
+        csv_file_name = f"{excel_name}_Brands_ToImport.csv"
         csv_file = open(csv_file_name, "w")
 
         exists = {}
@@ -66,7 +62,7 @@ class Shlush():
 
             # Error Handling certification
             if certification not in ('TRUE', 'FALSE'):
-                self.helper.red_colored_printer(f"Issue in CSV line: {row_number}, Certification = '{certification}'")
+                self.color_helper.red_colored_printer(f"Issue in CSV line: {row_number}, Certification = '{certification}'")
 
             # Check exclude_event
             if exclude_event == 'Opt out Rush Hour':
@@ -78,7 +74,7 @@ class Shlush():
 
             # Error Handling exclude_event
             if exclude_event not in ('TRUE', 'FALSE'):
-                self.helper.red_colored_printer(f"Issue in CSV line: {row_number}, ExcludeEvent = '{exclude_event}'")
+                self.color_helper.red_colored_printer(f"Issue in CSV line: {row_number}, ExcludeEvent = '{exclude_event}'")
 
             # Check Exclude Welcome
             if exclude_welcome == 'Opt out Welcome Bonus':
@@ -90,7 +86,7 @@ class Shlush():
 
             # Error Handling exclude_welcome
             if exclude_welcome not in ('TRUE', 'FALSE'):
-                self.helper.red_colored_printer(f"Issue in CSV line: {row_number}, ExcludeWelcome = '{exclude_welcome}'")
+                self.color_helper.red_colored_printer(f"Issue in CSV line: {row_number}, ExcludeWelcome = '{exclude_welcome}'")
 
             if allow_opt_out == 'Yes':
                 allow_opt_out = 'TRUE'
@@ -101,7 +97,7 @@ class Shlush():
 
             # Error Handling allow_opt_out
             if allow_opt_out not in ('TRUE', 'FALSE'):
-                self.helper.red_colored_printer(f"Issue in CSV line: {row_number}, AllowOptOut = '{allow_opt_out}'")
+                self.color_helper.red_colored_printer(f"Issue in CSV line: {row_number}, AllowOptOut = '{allow_opt_out}'")
 
             # Write final line to CSV row
             if partner_id not in exists:
@@ -114,16 +110,16 @@ class Shlush():
                                 "30631", "1000138", "3004612", "3004542", "30103"]:
                     # Error Handling certification
                     if certification not in ('TRUE', 'FALSE'):
-                        self.helper.red_colored_printer(f"Issue in CSV line: {row_number}, Certification = '{certification}'")
+                        self.color_helper.red_colored_printer(f"Issue in CSV line: {row_number}, Certification = '{certification}'")
                     # Error Handling exclude_event
                     if exclude_event not in ('TRUE', 'FALSE'):
-                        self.helper.red_colored_printer(f"Issue in CSV line: {row_number}, ExcludeEvent = '{exclude_event}'")
+                        self.color_helper.red_colored_printer(f"Issue in CSV line: {row_number}, ExcludeEvent = '{exclude_event}'")
                     # Error Handling exclude_welcome
                     if exclude_welcome not in ('TRUE', 'FALSE'):
-                        self.helper.red_colored_printer(f"Issue in CSV line: {row_number}, ExcludeWelcome = '{exclude_welcome}'")
+                        self.color_helper.red_colored_printer(f"Issue in CSV line: {row_number}, ExcludeWelcome = '{exclude_welcome}'")
                     # Error Handling allow_opt_out
                     if allow_opt_out not in ('TRUE', 'FALSE'):
-                        self.helper.red_colored_printer(f"Issue in CSV line: {row_number}, AllowOptOut = '{allow_opt_out}'")
+                        self.color_helper.red_colored_printer(f"Issue in CSV line: {row_number}, AllowOptOut = '{allow_opt_out}'")
                     csv_file.write(f"n-{partner_id};{certification};{exclude_event};{exclude_welcome};;{allow_opt_out}\n")
                     row_number += 1
                 exists[partner_id] = True
@@ -136,7 +132,7 @@ class Shlush():
 
 
     def shlush_brands_func(self,excel_name):
-        path_from_input = f"{excel_name}_Output.xlsx"
+        path_from_input = f"{excel_name}_Brands_Output.xlsx"
         wb = openpyxl.load_workbook(path_from_input)
         ws = wb.active
         # Variables to store column numbers
@@ -180,3 +176,38 @@ class Shlush():
 
         wb_new.save('separated_values.xlsx')
 
+    def shlush_games_func(self,excel_name):
+        path_from_input = f"{excel_name}_Games_Output.xlsx"
+        wb = openpyxl.load_workbook(path_from_input)
+        ws = wb.active
+
+        # Extract column number where name is 'Game Code'
+        col_num = None
+        for cell in ws[3]:  # 3rd row since we skip the first two rows
+            if cell.value in ['Game Code', 'BrandedGame']:
+                col_num = cell.column
+                break
+
+        # Extract values from col_num, skip first 3 rows
+        values = []
+        for row_num in range(4, ws.max_row + 1):  # start from 4th row, 1-based index
+            cell_value = ws.cell(row=row_num, column=col_num).value
+            if cell_value:
+                values.append(cell_value)
+
+        # Remove duplicates
+        values = list(set(values))
+        csv_file_name = f"{excel_name}_ToImport.csv"
+
+        # Write values to CSV file
+        with open(csv_file_name, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            csv_line = 1
+            for value in values:
+                # split value by ',' and write each part to a new row
+                for part in value.split(','):
+                    part_with_semicolons = part.strip() + ';;;;'
+                    if not part_with_semicolons.startswith('SlotMachine_') or '_' not in part_with_semicolons:
+                        self.color_helper.red_colored_printer(f'Issue in CSV line:{csv_line}, GameCode not according to format: {part}')
+                    csv_line += 1
+                    writer.writerow([part_with_semicolons])

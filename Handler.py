@@ -1,55 +1,39 @@
-import time
-from Helper import Helper
 from BrandsTool import BrandsTool
+from GamesTool import GamesTool
+from Color_Helper import Color_Helper
 
 
 
 class Handler:
     def __init__(self) -> None:
         self.brand_tool = BrandsTool()
-        self.helper = Helper()
+        self.game_tool = GamesTool()
+        self.color_helper = Color_Helper()
 
     def run(self):
-        self.brand_tool.get_rounds_from_board()
-        if self.brand_tool.validate_rounds():
-            # check run time of the program
-            start_time = time.time()
-            for board_id in self.helper.board_ids_list:
-                if self.brand_tool.selected_rounds_dict[board_id] == []:
-                    print("No board")
-                    continue
+        print("Welcome to the Tournament Tool")
+        print("For Brands Enter 1\nFor Games Enter 2\n")
+        while True:
+            user_choice = str(input("Enter Your choice:"))
+            try:
+                if user_choice == '1':
+                    self.color_helper.green_colored_printer("You have chose Brands Tool")
+                    self.brand_tool.run_brands_tool()
+                    break
+                elif user_choice == '2':
+                    self.color_helper.green_colored_printer("You have chose Games Tool")
+                    self.game_tool.run_games_tool()
+                    break
                 else:
-                    self.helper.red_colored_printer(f"Start process for board:{self.helper.get_board_name(board_id)} for Round {self.brand_tool.selected_rounds_dict[board_id]}")
-                    self.brand_tool.count_items_from_boards(board_id)
-                    if self.brand_tool.item_count > 700:
-                        item_ids_with_relevant_round = self.brand_tool.get_items_from_large_board(board_id)
-                    else:
-                        item_ids_with_relevant_round = self.brand_tool.get_items_from_board(board_id)
-                    self.brand_tool.items_dict[board_id] = item_ids_with_relevant_round
-                    items_str = self.brand_tool.prepare_items(self.brand_tool.items_dict[board_id])
-                    self.brand_tool.fetch_relevant_items(items_str,board_id)
-                    self.helper.green_colored_printer(f"Done process for board:{self.helper.get_board_name(board_id)} with {self.brand_tool.item_count} relevant items for Round {self.brand_tool.selected_rounds_dict[board_id]}")
-
-
-        end_time = time.time()
-        execution_time = end_time- start_time
-        print(execution_time)
-
-
-    def on_pushButton_clicked(self):
-        print("asdsadsad")
+                    self.color_helper.red_colored_printer('Answer has to be 1/2!')
+            except ValueError:
+                self.color_helper.red_colored_printer('Answer has to be 1/2!')
 
 
 
-
-
-hand = Handler()
-hand.run()
-
-
-
-
-
+if __name__ == "__main__":
+    handler = Handler()
+    handler.run()
 
 
 
