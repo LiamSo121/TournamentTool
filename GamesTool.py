@@ -2,8 +2,7 @@ import requests
 from Helper import Helper
 import re
 from Color_Helper import Color_Helper
-import time
-
+from BO import BackOfficeIntegration
 API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjI3ODY5NjczMywiYWFpIjoxMSwidWlkIjo0MTEzMjIzNSwiaWFkIjoiMjAyMy0wOC0zMVQxMTozMTowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTM5OTE1LCJyZ24iOiJ1c2UxIn0.jqoc1M3Sjv0r0Z7m7bt_8gDYZH-MBvQ0FwsNXtBSDGQ"
 ENDPOINT = "https://api.monday.com/v2"
 
@@ -14,6 +13,7 @@ class GamesTool:
     def __init__(self):
         self.helper = Helper()
         self.color_helper = Color_Helper()
+        self.bo = BackOfficeIntegration()
         self.main_board_id = "3014186450"
         self.main_board_tournament = None
         self.main_board_column_id = None
@@ -189,12 +189,9 @@ class GamesTool:
 
     def run_games_tool(self):
         self.helper.games_or_brands = 'games'
-        print("Please wait for games script to launch")
         # self.get_tournament()
         self.helper.get_rounds_from_board()
         if self.helper.validate_rounds():
-            # check run time of the program
-            # start_time = time.time()
             # self.main_games_board()
             for board_id in self.helper.board_ids_list:
                 if self.helper.selected_rounds_dict[board_id] == []:
@@ -207,8 +204,5 @@ class GamesTool:
                     self.helper.items_dict[board_id] = item_ids_with_relevant_round
                     items_str = self.helper.prepare_items(self.helper.items_dict[board_id])
                     self.helper.fetch_relevant_items(items_str,board_id)
+                    # self.bo.csv_to_dict(f"{self.helper.get_board_name(board_id)}_Games_ToImport.csv")
                     self.color_helper.green_colored_printer(f"Done process for board:{self.helper.get_board_name(board_id)} with {self.helper.item_count} relevant items for Round {self.helper.selected_rounds_dict[board_id]}")
-        # end_time = time.time()
-        # execution_time = end_time- start_time
-        # print(execution_time)
-

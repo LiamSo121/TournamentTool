@@ -24,11 +24,11 @@ class BackOfficeIntegration:
                 data_list.append(row)
             # Create the final dictionary with the list as a value
             data_dict = {"tournamentBrandListItems": data_list}
-
-            return data_dict
-
+            print(data_dict)
+            # prepare dict to post massage
+            result_to_send = json.dumps(data_dict)
         except Exception as e:
-            return {"error": str(e)}
+            print(e)
         
 
 
@@ -51,17 +51,4 @@ class BackOfficeIntegration:
 
         return cleaned_string
 
-
-
-
-bo = BackOfficeIntegration()
-
-result = bo.csv_to_dict("Amit's_Board_Brands_ToImport.csv")
-if 'error' in result:
-    self.
-else:
-    print(type(result))
-
-
-result_to_send = json.dumps(result)
 

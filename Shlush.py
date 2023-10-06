@@ -197,7 +197,7 @@ class Shlush():
 
         # Remove duplicates
         values = list(set(values))
-        csv_file_name = f"{excel_name}_ToImport.csv"
+        csv_file_name = f"{excel_name}_Games_ToImport.csv"
 
         # Write values to CSV file
         with open(csv_file_name, 'w', newline='') as csvfile:
