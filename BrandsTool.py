@@ -17,8 +17,6 @@ class BrandsTool:
 
 
 
-
-
     def run_brands_tool(self):
         self.helper.games_or_brands = 'brands'
         self.helper.get_rounds_from_board()
