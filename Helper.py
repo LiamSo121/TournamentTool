@@ -36,6 +36,7 @@ class Helper:
     
 
     def get_column_tournament_id(self,board_id):
+        print("tour")
         board_id = int(board_id)
         query = f"""
                 {{
@@ -47,9 +48,13 @@ class Helper:
                     }}
                 }}
                 """
+        print(query)
         response = requests.post(self.endpoint, json={"query": query}, headers={"Authorization": self.api_key})
         data = response.json()
         print(data)
+        print("test2")
+        print(data)
+        print("data")
         for item in data['data']['boards'][0]['columns']:
             if item['title'] == "Tournament":
                 return item['id']
@@ -106,8 +111,12 @@ class Helper:
     # get the rounds that you want to filter on
     def get_rounds_from_board(self):
         # self.validate_round_number()
+        print("rounds")
+        print(self.board_ids_list)
         for board_id in self.board_ids_list:
+            print(board_id)
             self.column_id = self.get_column_tournament_id(board_id)
+            print(self.column_id)
             query = f"""
                         {{
                             boards(ids: {board_id}) {{

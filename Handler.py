@@ -17,6 +17,7 @@ class Handler:
             user_choice = str(input("Enter Your choice:"))
             try:
                 if user_choice == '1':
+                    print("test")
                     self.color_helper.green_colored_printer("You have chose Brands Tool")
                     self.brand_tool.run_brands_tool()
                     break
